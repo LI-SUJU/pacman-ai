@@ -361,18 +361,18 @@ class CaptureRules:
       game.gameOver = True
       if not game.rules.quiet:
         if state.getRedFood().count() == MIN_FOOD:
-          print 'The Blue team has captured all but %d of the opponents\' dots.' % MIN_FOOD
-          print 'The Blue team wins by %d points.' % state.data.score
+          print ('The Blue team has captured all but %d of the opponents\' dots.' % MIN_FOOD)
+          print ('The Blue team wins by %d points.' % state.data.score)
         if state.getBlueFood().count() == MIN_FOOD:
-          print 'The Red team has captured all but %d of the opponents\' dots.' % MIN_FOOD
-          print ' The Red team wins by %d points.' % state.data.score
+          print ('The Red team has captured all but %d of the opponents\' dots.' % MIN_FOOD)
+          print (' The Red team wins by %d points.' % state.data.score)
         if state.getBlueFood().count() > MIN_FOOD and state.getRedFood().count() > MIN_FOOD:
-          print 'Time is up.'
-          if state.data.score == 0: print 'Tie game!'
+          print ('Time is up.')
+          if state.data.score == 0: print ('Tie game!')
           else:
             winner = 'Red'
             if state.data.score < 0: winner = 'Blue'
-            print 'The %s team wins by %d points.' % (winner, abs(state.data.score))
+            print ('The %s team wins by %d points.' % (winner, abs(state.data.score)))
 
   def getProgress(self, game):
     blue = 1.0 - (game.state.getBlueFood().count() / float(self._initBlueFood))
@@ -384,10 +384,10 @@ class CaptureRules:
 
   def agentCrash(self, game, agentIndex):
     if agentIndex % 2 == 0:
-      print "Red agent crashed"
+      print ("Red agent crashed")
       game.state.data.score = -1
     else:
-      print "Blue agent crashed"
+      print ("Blue agent crashed")
       game.state.data.score = 1
 
   def getMaxTotalTime(self, agentIndex):
@@ -650,7 +650,7 @@ def readCommand( argv ):
 
   # Special case: recorded games don't use the runGames method or args structure
   if options.replay != None:
-    print 'Replaying recorded game %s.' % options.replay
+    print('Replaying recorded game %s.' % options.replay)
     import cPickle
     recorded = cPickle.load(open(options.replay))
     recorded['display'] = args['display']
@@ -663,9 +663,9 @@ def readCommand( argv ):
     redArgs['numTraining'] = options.numTraining
     blueArgs['numTraining'] = options.numTraining
   nokeyboard = options.textgraphics or options.quiet or options.numTraining > 0
-  print '\nRed team %s with %s:' % (options.red, redArgs)
+  print('\nRed team %s with %s:' % (options.red, redArgs))
   redAgents = loadAgents(True, options.red, nokeyboard, redArgs)
-  print '\nBlue team %s with %s:' % (options.blue, blueArgs)
+  print('\nBlue team %s with %s:' % (options.blue, blueArgs))
   blueAgents = loadAgents(False, options.blue, nokeyboard, blueArgs)
   args['agents'] = sum([list(el) for el in zip(redAgents, blueAgents)],[]) # list of agents
 
@@ -687,7 +687,7 @@ def readCommand( argv ):
 
 def randomLayout():
   layout = 'layouts/random%08dCapture.lay' % random.randint(0,99999999)
-  print 'Generating random layout in %s' % layout
+  print('Generating random layout in %s' % layout)
   import mazeGenerator
   out = file(layout, 'w')
   out.write(mazeGenerator.generateMaze())
@@ -704,7 +704,7 @@ def loadAgents(isRed, factory, textgraphics, cmdLineArgs):
   try:
     conf = __import__(factory + ".config", fromlist="config")
   except ImportError:
-    print 'Error: The team "' + factory + '" config could not be loaded! '
+    print ('Error: The team "' + factory + '" config could not be loaded! ')
     traceback.print_exc()
     return [None for i in range(3)]
 
@@ -713,10 +713,10 @@ def loadAgents(isRed, factory, textgraphics, cmdLineArgs):
   args = dict(conf.AgentArgs)
   args.update(cmdLineArgs)  # Add command line args with priority
 
-  print "Loading Team:", conf.TeamName
-  print "Arguments:", args
-  print "Partners:", conf.Partners
-  print "Agent Factory:", factory
+  print("Loading Team:", conf.TeamName)
+  print("Arguments:", args)
+  print("Partners:", conf.Partners)
+  print("Agent Factory:", factory)
 
   factoryClassName = factory.split(".")[-1]
   factoryPackageName = ".".join(factory.split(".")[:-1])
@@ -726,24 +726,10 @@ def loadAgents(isRed, factory, textgraphics, cmdLineArgs):
   # if textgraphics and factoryClassName.startswith('Keyboard'):
   #   raise Exception('Using the keyboard requires graphics (no text display, quiet or training games)')
 
-  print "Namespace: ", factoryPackageName
-  print "Agent: ", factoryClassName
+  print("Namespace: " + factoryPackageName)
+  print("Agent: " + factoryClassName)
 
-  try:
-    module = __import__(factoryPackageName, fromlist=factoryClassName)
-  except ImportError, data:
-    module = None
-
-  foundFactory = getattr(module, factoryClassName, None)
-  if not module or not foundFactory:
-    print 'Error: The team "' + factory + '" could not be loaded! '
-    traceback.print_exc()
-    return [None for i in range(3)]
-
-  foundFactory = foundFactory(isRed=isRed, **args)
-  indexAddend = 0
-  if not isRed:
-    indexAddend = 1
+  print('Error: The team "' + factory + '" could not be loaded! ')
   indices = [2*i + indexAddend for i in range(3)]
   return [foundFactory.getAgent(i) for i in indices]
 
@@ -772,7 +758,7 @@ def runGames( layout, agents, display, length, numGames, record, numTraining, mu
   games = []
 
   if numTraining > 0:
-    print 'Playing %d training games' % numTraining
+    print('Playing %d training games\n' % numTraining)
 
   for i in range( numGames ):
     beQuiet = i < numTraining
@@ -795,18 +781,18 @@ def runGames( layout, agents, display, length, numGames, record, numTraining, mu
       #f = file(fname, 'w')
       components = {'layout': layout, 'agents': [game.Agent() for a in agents], 'actions': g.moveHistory, 'length': length}
       #f.close()
-      print "recorded"
+      print("recorded")
       g.record = cPickle.dumps(components)
 
   if numGames > 1:
     scores = [game.state.data.score for game in games]
     redWinRate = [s > 0 for s in scores].count(True)/ float(len(scores))
     blueWinRate = [s < 0 for s in scores].count(True)/ float(len(scores))
-    print 'Average Score:', sum(scores) / float(len(scores))
-    print 'Scores:       ', ', '.join([str(score) for score in scores])
-    print 'Red Win Rate:  %d/%d (%.2f)' % ([s > 0 for s in scores].count(True), len(scores), redWinRate)
-    print 'Blue Win Rate: %d/%d (%.2f)' % ([s < 0 for s in scores].count(True), len(scores), blueWinRate)
-    print 'Record:       ', ', '.join([('Blue', 'Tie', 'Red')[max(0, min(2, 1 + s))] for s in scores])
+    print('Average Score:', sum(scores) / float(len(scores)))
+    print('Scores:       ', ', '.join([str(score) for score in scores]))
+    print('Red Win Rate:  %d/%d (%.2f)' % ([s > 0 for s in scores].count(True), len(scores), redWinRate))
+    print('Blue Win Rate: %d/%d (%.2f)' % ([s < 0 for s in scores].count(True), len(scores), blueWinRate))
+    print('Record:       ', ', '.join([('Blue', 'Tie', 'Red')[max(0, min(2, 1 + s))] for s in scores]))
   return games
 
 
